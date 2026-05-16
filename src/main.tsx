@@ -7,6 +7,10 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import AuthenticatedAppShellPage from "./pages/AuthenticatedAppShellPage";
+import DashboardPage from "./pages/DashboardPage";
+import CompliancePage from "./pages/CompliancePage";
+import BridgePage from "./pages/BridgePage";
 import "./styles.css";
 
 function ProtectedLayout() {
@@ -17,7 +21,11 @@ function ProtectedLayout() {
     return null;
   }
 
-  return <Outlet />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace state={{ from: location }} />;
+  }
+
+  return <AuthenticatedAppShellPage><Outlet /></AuthenticatedAppShellPage>;
 }
 
 function AppRoutes() {
@@ -27,6 +35,11 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route element={<ProtectedLayout />}>
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/compliance" element={<CompliancePage />} />
+        <Route path="/bridge" element={<BridgePage />} />
+      </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
