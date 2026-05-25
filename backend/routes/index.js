@@ -2,6 +2,8 @@ const { Router } = require("express");
 const { requireAuth } = require("../middleware/auth.js");
 const authController = require("../controllers/authController.js");
 const dashboardController = require("../controllers/dashboardController.js");
+const payrollController = require("../controllers/payrollController.js");
+const employeeController = require("../controllers/employeeController.js");
 const complianceController = require("../controllers/complianceController.js");
 
 // Express router for the ConfidentialPay API. This backend uses Node.js + Express only.
@@ -20,6 +22,25 @@ router.get("/api/dashboard/stats", requireAuth, dashboardController.getStats);
 router.get("/api/dashboard/transactions", requireAuth, dashboardController.getTransactions);
 router.get("/api/dashboard/payroll-activity", requireAuth, dashboardController.getPayrollActivity);
 router.get("/api/dashboard/upcoming-payrolls", requireAuth, dashboardController.getUpcomingPayrolls);
+
+router.get("/api/payroll/employees", requireAuth, payrollController.getPayrollEmployees);
+router.post("/api/payroll/execute", requireAuth, payrollController.executePayroll);
+router.post("/api/payroll/schedule", requireAuth, payrollController.createScheduledPayroll);
+router.get("/api/payroll/scheduled", requireAuth, payrollController.listScheduledPayrolls);
+router.put("/api/payroll/scheduled/:id", requireAuth, payrollController.updateScheduledPayroll);
+router.delete("/api/payroll/scheduled/:id", requireAuth, payrollController.deleteScheduledPayroll);
+router.get("/api/payroll/history", requireAuth, payrollController.getPayrollHistory);
+router.get("/api/payroll/templates", requireAuth, payrollController.getPayrollTemplates);
+router.post("/api/payroll/templates", requireAuth, payrollController.createPayrollTemplate);
+
+router.get("/api/employees", requireAuth, employeeController.listEmployees);
+router.get("/api/employees/:id", requireAuth, employeeController.getEmployee);
+router.post("/api/employees", requireAuth, employeeController.createEmployee);
+router.put("/api/employees/:id", requireAuth, employeeController.updateEmployee);
+router.delete("/api/employees/:id", requireAuth, employeeController.deleteEmployee);
+router.post("/api/employees/bulk-import", requireAuth, employeeController.bulkImportEmployees);
+
+router.get("/api/bridge", requireAuth, treasuryController.getBridgeOverview);
 
 router.get("/api/compliance", requireAuth, complianceController.getComplianceSummary);
 router.get("/api/compliance/score", requireAuth, complianceController.getComplianceScore);
