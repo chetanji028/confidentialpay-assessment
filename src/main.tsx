@@ -9,6 +9,8 @@ import SignupPage from "./pages/SignupPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import AuthenticatedAppShellPage from "./pages/AuthenticatedAppShellPage";
 import DashboardPage from "./pages/DashboardPage";
+import PayrollPage from "./pages/PayrollPage";
+import EmployeesPage from "./pages/EmployeesPage";
 import CompliancePage from "./pages/CompliancePage";
 import BridgePage from "./pages/BridgePage";
 import "./styles.css";
@@ -37,6 +39,8 @@ function AppRoutes() {
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route element={<ProtectedLayout />}>
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/payroll" element={<PayrollPage />} />
+        <Route path="/employees" element={<EmployeesPage />} />
         <Route path="/compliance" element={<CompliancePage />} />
         <Route path="/bridge" element={<BridgePage />} />
       </Route>
