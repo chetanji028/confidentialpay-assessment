@@ -4,7 +4,9 @@ const authController = require("../controllers/authController.js");
 const dashboardController = require("../controllers/dashboardController.js");
 const payrollController = require("../controllers/payrollController.js");
 const employeeController = require("../controllers/employeeController.js");
+const treasuryController = require("../controllers/treasuryController.js");
 const complianceController = require("../controllers/complianceController.js");
+const settingsController = require("../controllers/settingsController.js");
 
 // Express router for the ConfidentialPay API. This backend uses Node.js + Express only.
 const router = Router();
@@ -41,11 +43,20 @@ router.delete("/api/employees/:id", requireAuth, employeeController.deleteEmploy
 router.post("/api/employees/bulk-import", requireAuth, employeeController.bulkImportEmployees);
 
 router.get("/api/bridge", requireAuth, treasuryController.getBridgeOverview);
+router.get("/api/treasury/balances", requireAuth, treasuryController.getBalances);
+router.get("/api/treasury/transactions", requireAuth, treasuryController.getTreasuryTransactions);
+router.post("/api/treasury/deposit", requireAuth, treasuryController.deposit);
+router.post("/api/treasury/withdraw", requireAuth, treasuryController.withdraw);
+router.post("/api/treasury/bridge", requireAuth, treasuryController.bridge);
 
 router.get("/api/compliance", requireAuth, complianceController.getComplianceSummary);
 router.get("/api/compliance/score", requireAuth, complianceController.getComplianceScore);
 router.get("/api/compliance/status", requireAuth, complianceController.getComplianceStatus);
 router.get("/api/compliance/audit", requireAuth, complianceController.getComplianceAudit);
 router.post("/api/compliance/reports/generate", requireAuth, complianceController.generateComplianceReport);
+
+router.get("/api/settings", requireAuth, settingsController.getSettingsHandler);
+router.put("/api/settings", requireAuth, settingsController.updateSettingsHandler);
+router.get("/api/settings/team", requireAuth, settingsController.getTeamSettings);
 
 module.exports = router;
