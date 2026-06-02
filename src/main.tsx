@@ -11,8 +11,10 @@ import AuthenticatedAppShellPage from "./pages/AuthenticatedAppShellPage";
 import DashboardPage from "./pages/DashboardPage";
 import PayrollPage from "./pages/PayrollPage";
 import EmployeesPage from "./pages/EmployeesPage";
+import TreasuryPage from "./pages/TreasuryPage";
 import CompliancePage from "./pages/CompliancePage";
 import BridgePage from "./pages/BridgePage";
+import SettingsPage from "./pages/SettingsPage";
 import "./styles.css";
 
 function ProtectedLayout() {
@@ -41,8 +43,10 @@ function AppRoutes() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/payroll" element={<PayrollPage />} />
         <Route path="/employees" element={<EmployeesPage />} />
+        <Route path="/treasury" element={<TreasuryPage />} />
         <Route path="/compliance" element={<CompliancePage />} />
         <Route path="/bridge" element={<BridgePage />} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
