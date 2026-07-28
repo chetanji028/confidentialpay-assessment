@@ -73,6 +73,41 @@ function health(_req, res) {
   return res.json({ ok: true, service: "treasury" });
 }
 
+function getTransactions(req, res) {
+  const { type } = req.query;
+
+  const validTypes = [
+    "deposit",
+    "withdraw",
+    "payroll",
+    "bridge",
+  ];
+
+  if (type && !validTypes.includes(type)) {
+    return res.status(400).json({ error: "Invalid or missing transaction type. Valid types are: deposit, withdraw, payroll, bridge." });
+  }
+
+
+  const filteredTransactions =
+    type && validTypes.includes(type)
+      ? transactions.filter((tx) => tx.type === type)
+      : transactions;
+
+
+  if (!filteredTransactions || filteredTransactions.length === 0) {
+    return res.status(404).json({ error: "No transactions found for the specified type." });
+  }
+
+
+  return res.json({
+    success: true,
+    data: {
+      transactions: filteredTransactions,
+      total: filteredTransactions.length
+    }
+  });
+}
+
 module.exports = {
   getBalances,
   getTreasuryTransactions,
@@ -87,4 +122,5 @@ module.exports = {
   getTreasuryAlerts,
   getTreasuryReports,
   health,
+  getTransactions,
 };

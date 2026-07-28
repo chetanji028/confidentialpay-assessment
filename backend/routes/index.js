@@ -8,6 +8,7 @@ const treasuryController = require("../controllers/treasuryController.js");
 const complianceController = require("../controllers/complianceController.js");
 const settingsController = require("../controllers/settingsController.js");
 
+
 // Express router for the ConfidentialPay API. This backend uses Node.js + Express only.
 const router = Router();
 
@@ -48,6 +49,7 @@ router.get("/api/treasury/transactions", requireAuth, treasuryController.getTrea
 router.post("/api/treasury/deposit", requireAuth, treasuryController.deposit);
 router.post("/api/treasury/withdraw", requireAuth, treasuryController.withdraw);
 router.post("/api/treasury/bridge", requireAuth, treasuryController.bridge);
+router.get("/api/transactions", requireAuth, treasuryController.getTransactions);
 
 router.get("/api/compliance", requireAuth, complianceController.getComplianceSummary);
 router.get("/api/compliance/score", requireAuth, complianceController.getComplianceScore);
