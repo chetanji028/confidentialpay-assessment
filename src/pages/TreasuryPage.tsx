@@ -1,17 +1,57 @@
 import { useApiData } from "@/lib/useApiData";
 import { Wallet, ArrowDownToLine, ArrowUpFromLine, Copy, TrendingUp, Lock, Zap } from "lucide-react";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { fmtUSD } from "@/lib/format";
 import { GlassCard, PageHeader, ChainBadge } from "@/components/layout/Primitives";
 
 const DEPOSIT_ADDR = "0x7f3eA4b21cD9f08B5a6c11E0B23F8a9D4cE7b210";
 
+type Transaction = {
+  id: string;
+  type: "deposit" | "withdraw" | "payroll" | "bridge";
+  amount: number;
+  status: string;
+  chain: string;
+  date: string;
+};
+
 export default function TreasuryPage() {
   const { data } = useApiData<any>("/api/treasury/balances");
   const [wAmount, setWAmount] = useState("");
   const [wTo, setWTo] = useState("");
+  const [selectedType, setSelectedType] = useState("");
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactionTotal, setTransactionTotal] = useState(0);
+  const [transactionsLoading, setTransactionsLoading] = useState(true);
+  const [transactionsError, setTransactionsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadTransactions() {
+      setTransactionsLoading(true);
+      setTransactionsError(null);
+      try {
+        const query = selectedType ? `?type=${encodeURIComponent(selectedType)}` : "";
+        const response = await api.get(`/api/treasury/transactions${query}`);
+        if (!active) return;
+        setTransactions(response.data.data.transactions);
+        setTransactionTotal(response.data.data.total);
+      } catch (error: any) {
+        if (!active) return;
+        setTransactions([]);
+        setTransactionTotal(0);
+        setTransactionsError(error.response?.data?.error ?? error.message ?? "Unable to load transactions.");
+      } finally {
+        if (active) setTransactionsLoading(false);
+      }
+    }
+
+    loadTransactions();
+    return () => { active = false; };
+  }, [selectedType]);
 
   return (
     <div className="space-y-6">
@@ -101,6 +141,49 @@ export default function TreasuryPage() {
           </GlassCard>
         </div>
       </div>
+
+      <GlassCard>
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h3 className="text-base font-semibold">Transaction History</h3>
+            <p className="mt-1 text-sm text-muted-foreground">{transactionTotal} transaction{transactionTotal === 1 ? "" : "s"}</p>
+          </div>
+          <label className="flex w-full flex-col gap-1 text-sm font-medium sm:w-56">
+            Filter by type
+            <select
+              value={selectedType}
+              onChange={(event) => setSelectedType(event.target.value)}
+              className="w-full rounded-lg border border-border bg-input/40 px-3 py-2 text-sm font-normal"
+            >
+              <option value="">All Types</option>
+              <option value="payroll">Payroll</option>
+              <option value="deposit">Deposit</option>
+              <option value="withdraw">Withdraw</option>
+              <option value="bridge">Bridge</option>
+            </select>
+          </label>
+        </div>
+
+        {transactionsLoading && <p className="py-6 text-sm text-muted-foreground">Loading transactions…</p>}
+        {transactionsError && <p role="alert" className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">{transactionsError}</p>}
+        {!transactionsLoading && !transactionsError && transactions.length === 0 && <p className="py-6 text-sm text-muted-foreground">No transactions found.</p>}
+        {!transactionsLoading && !transactionsError && transactions.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead><tr className="border-b border-border text-left text-[11px] uppercase text-muted-foreground"><th className="pb-2">Type</th><th className="pb-2">Amount</th><th className="pb-2">Chain</th><th className="pb-2">Status</th><th className="pb-2">Date</th></tr></thead>
+              <tbody>{transactions.map((transaction) => (
+                <tr key={transaction.id} className="border-b border-border/60">
+                  <td className="py-3 font-medium capitalize">{transaction.type}</td>
+                  <td className="py-3 font-mono">{fmtUSD(transaction.amount)}</td>
+                  <td className="py-3"><ChainBadge chain={transaction.chain} /></td>
+                  <td className="py-3 capitalize">{transaction.status}</td>
+                  <td className="py-3 text-muted-foreground">{new Date(transaction.date).toLocaleDateString()}</td>
+                </tr>
+              ))}</tbody>
+            </table>
+          </div>
+        )}
+      </GlassCard>
     </div>
   );
 }

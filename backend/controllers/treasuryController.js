@@ -75,36 +75,25 @@ function health(_req, res) {
 
 function getTransactions(req, res) {
   const { type } = req.query;
-
-  const validTypes = [
-    "deposit",
-    "withdraw",
-    "payroll",
-    "bridge",
-  ];
+  const validTypes = ["deposit", "withdraw", "payroll", "bridge"];
 
   if (type && !validTypes.includes(type)) {
-    return res.status(400).json({ error: "Invalid or missing transaction type. Valid types are: deposit, withdraw, payroll, bridge." });
+    return res.status(400).json({
+      success: false,
+      error: "Invalid type. Must be: deposit, withdraw, payroll, or bridge",
+    });
   }
 
-
-  const filteredTransactions =
-    type && validTypes.includes(type)
-      ? transactions.filter((tx) => tx.type === type)
-      : transactions;
-
-
-  if (!filteredTransactions || filteredTransactions.length === 0) {
-    return res.status(404).json({ error: "No transactions found for the specified type." });
-  }
-
+  const filteredTransactions = type
+    ? transactions.filter((tx) => tx.type === type)
+    : transactions;
 
   return res.json({
     success: true,
     data: {
       transactions: filteredTransactions,
-      total: filteredTransactions.length
-    }
+      total: filteredTransactions.length,
+    },
   });
 }
 

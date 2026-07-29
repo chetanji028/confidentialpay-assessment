@@ -122,7 +122,11 @@ export function mockGet(url: string): unknown {
   if (u === "/api/payroll/templates") return { items: mockTemplates };
 
   if (u === "/api/treasury/balances") return mockBalances;
-  if (u === "/api/treasury/transactions") return { items: mockTransactions };
+  if (u === "/api/treasury/transactions") {
+    const type = q.get("type");
+    const transactions = type ? mockTransactions.filter((transaction) => transaction.type === type) : mockTransactions;
+    return { success: true, data: { transactions, total: transactions.length } };
+  }
 
   if (u === "/api/compliance/score") return mockComplianceScore;
   if (u === "/api/compliance/status") return mockComplianceStatus;

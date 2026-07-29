@@ -45,7 +45,7 @@ router.post("/api/employees/bulk-import", requireAuth, employeeController.bulkIm
 
 router.get("/api/bridge", requireAuth, treasuryController.getBridgeOverview);
 router.get("/api/treasury/balances", requireAuth, treasuryController.getBalances);
-router.get("/api/treasury/transactions", requireAuth, treasuryController.getTreasuryTransactions);
+router.get("/api/treasury/transactions", requireAuth, treasuryController.getTransactions);
 router.post("/api/treasury/deposit", requireAuth, treasuryController.deposit);
 router.post("/api/treasury/withdraw", requireAuth, treasuryController.withdraw);
 router.post("/api/treasury/bridge", requireAuth, treasuryController.bridge);
